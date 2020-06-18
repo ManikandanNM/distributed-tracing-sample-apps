@@ -43,8 +43,10 @@ public class DeliveryService extends Application<DropwizardServiceConfig> {
   }
 
   public static void main(String[] args) throws Exception {
-    Tracer tracer = Tracing.init("delivery");
-    new DeliveryService(tracer).run(args);
+    String wavefrontUrl = "https://nimba.wavefront.com/api";
+    String wavefrontToken = args[0];
+    Tracer tracer = Tracing.init("delivery", wavefrontUrl, wavefrontToken);
+    new DeliveryService(tracer).run(args[1], args[2]);
   }
 
   @Override

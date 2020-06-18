@@ -5,6 +5,7 @@ import com.uber.jaeger.Configuration.ReporterConfiguration;
 import com.uber.jaeger.Configuration.SamplerConfiguration;
 import com.uber.jaeger.samplers.ConstSampler;
 
+import com.wavefront.sdk.direct.ingestion.WavefrontDirectIngestionClient;
 import io.opentracing.Scope;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
@@ -16,10 +17,18 @@ import okhttp3.Request;
 
 import javax.ws.rs.core.MultivaluedMap;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+
+import com.wavefront.opentracing.WavefrontTracer;
+import com.wavefront.opentracing.reporting.Reporter;
+import com.wavefront.opentracing.reporting.WavefrontSpanReporter;
+import com.wavefront.sdk.common.WavefrontSender;
+import com.wavefront.sdk.common.application.ApplicationTags;
+import com.wavefront.sdk.proxy.WavefrontProxyClient;
 
 public final class Tracing {
   private final static Random RAND = new Random(System.currentTimeMillis());
@@ -31,7 +40,7 @@ public final class Tracing {
   private Tracing() {
   }
 
-  public static com.uber.jaeger.Tracer init(String service) {
+  /*public static com.uber.jaeger.Tracer init(String service) {
     SamplerConfiguration samplerConfig = SamplerConfiguration.fromEnv()
         .withType(ConstSampler.TYPE)
         .withParam(1);
@@ -43,6 +52,27 @@ public final class Tracing {
         .withReporter(reporterConfig);
 
     return (com.uber.jaeger.Tracer) config.getTracer();
+  }*/
+
+  public static Tracer init(String service, String wavefrontUrl, String wavefrontToken) throws IOException {
+/*    WavefrontProxyClient.Builder wfProxyClientBuilder = new WavefrontProxyClient.
+            Builder("10.192.56.44").metricsPort(2878).tracingPort(30000).distributionPort(40000);
+    WavefrontSender wavefrontSender = wfProxyClientBuilder.build();*/
+    WavefrontDirectIngestionClient.Builder wfDirectIngestionClient = new WavefrontDirectIngestionClient.
+            Builder(wavefrontUrl, wavefrontToken);
+    WavefrontSender wavefrontSender = wfDirectIngestionClient.build();
+    /**
+     * TODO: You need to assign your microservices application a name.
+     * For this hackathon, please prepend your name (example: "john") to the beachshirts application,
+     * for example: applicationName = "john-beachshirts"
+     */
+    ApplicationTags applicationTags = new ApplicationTags.Builder("Mani-automation-sdk-app",
+            service).build();
+    Reporter wfSpanReporter = new WavefrontSpanReporter.Builder().
+            withSource("wavefront-tracing-example").build(wavefrontSender);
+    WavefrontTracer.Builder wfTracerBuilder = new WavefrontTracer.
+            Builder(wfSpanReporter, applicationTags);
+    return wfTracerBuilder.build();
   }
 
   public static Scope startServerSpan(Tracer tracer, javax.ws.rs.core.HttpHeaders httpHeaders, String operationName) {
