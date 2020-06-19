@@ -45,7 +45,7 @@ public class StylingService extends Application<DropwizardServiceConfig> {
   }
 
   public static void main(String[] args) throws Exception {
-    String wavefrontUrl = "https://nimba.wavefront.com/api";
+    String wavefrontUrl = "https://nimba.wavefront.com";
     String wavefrontToken = args[0];
     Tracer tracer = Tracing.init("styling", wavefrontUrl,wavefrontToken);
     new StylingService(tracer).run(args[1], args[2]);
