@@ -104,10 +104,15 @@
         </dependency>
 
         <dependency>
-            <groupId>com.wavefront</groupId>
-            <artifactId>wavefront-opentracing-sdk-java</artifactId>
-            <version>1.12</version>
+            <groupId>wavefront-sdk</groupId>
+            <artifactId>wavefront-sdk</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>
+                /app/wavefront-sdk-java.jar
+            </systemPath>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -121,38 +126,6 @@
                         <target>1.8</target>
                     </configuration>
                 </plugin>
-
-               <!-- <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.5</version>
-                    <configuration>
-                        <systemPropertyVariables>
-                            <wavefrontUrl>dummy-url</wavefrontUrl>
-                            <wavefrontToken>dummy-token</wavefrontToken>
-                        </systemPropertyVariables>
-                    </configuration>
-                </plugin>-->
-
-               <!-- <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.4.0</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>java</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <mainClass>com.wfsample.shopping.ShoppingService</mainClass>
-                        <arguments>
-                            <argument>arg0</argument>
-                            <argument>arg1</argument>
-                        </arguments>
-                    </configuration>
-                </plugin>-->
             </plugins>
         </pluginManagement>
     </build>
