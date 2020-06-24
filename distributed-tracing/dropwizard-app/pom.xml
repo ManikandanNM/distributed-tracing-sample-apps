@@ -109,7 +109,7 @@
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>
-                ./wavefront-sdk-java.jar
+                wavefront-sdk-java.jar
             </systemPath>
         </dependency>
 
