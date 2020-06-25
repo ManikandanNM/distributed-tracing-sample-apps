@@ -104,13 +104,9 @@
         </dependency>
 
         <dependency>
-            <groupId>wavefront-sdk</groupId>
-            <artifactId>wavefront-sdk</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>
-                /app/target/wavefront-opentracing-sdk-java.jar
-            </systemPath>
+                 <groupId>com.wavefront</groupId>
+                 <artifactId>wavefront-opentracing-sdk-java</artifactId>
+                 <version>automation-tracer-version</version>
         </dependency>
 
     </dependencies>
