@@ -109,7 +109,7 @@
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>
-                /app/wavefront-opentracing-sdk-java.jar
+                /app/target/wavefront-opentracing-sdk-java.jar
             </systemPath>
         </dependency>
 
