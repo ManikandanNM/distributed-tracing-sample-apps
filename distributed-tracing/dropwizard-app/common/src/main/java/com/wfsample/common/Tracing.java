@@ -40,24 +40,7 @@ public final class Tracing {
   private Tracing() {
   }
 
-  /*public static com.uber.jaeger.Tracer init(String service) {
-    SamplerConfiguration samplerConfig = SamplerConfiguration.fromEnv()
-        .withType(ConstSampler.TYPE)
-        .withParam(1);
-
-    ReporterConfiguration reporterConfig = ReporterConfiguration.fromEnv();
-
-    Configuration config = new Configuration(service)
-        .withSampler(samplerConfig)
-        .withReporter(reporterConfig);
-
-    return (com.uber.jaeger.Tracer) config.getTracer();
-  }*/
-
-  public static Tracer init(String service, String wavefrontUrl, String wavefrontToken) throws IOException {
-/*    WavefrontProxyClient.Builder wfProxyClientBuilder = new WavefrontProxyClient.
-            Builder("10.192.56.44").metricsPort(2878).tracingPort(30000).distributionPort(40000);
-    WavefrontSender wavefrontSender = wfProxyClientBuilder.build();*/
+  public static Tracer init(String service, String wavefrontUrl, String wavefrontToken, String applicationName) throws IOException {
     WavefrontDirectIngestionClient.Builder wfDirectIngestionClient = new WavefrontDirectIngestionClient.
             Builder(wavefrontUrl, wavefrontToken);
     WavefrontSender wavefrontSender = wfDirectIngestionClient.build();
@@ -66,7 +49,25 @@ public final class Tracing {
      * For this hackathon, please prepend your name (example: "john") to the beachshirts application,
      * for example: applicationName = "john-beachshirts"
      */
-    ApplicationTags applicationTags = new ApplicationTags.Builder("Mani-automation-sdk-app",
+    ApplicationTags applicationTags = new ApplicationTags.Builder(applicationName,
+            service).build();
+    Reporter wfSpanReporter = new WavefrontSpanReporter.Builder().
+            withSource("wavefront-tracing-example").build(wavefrontSender);
+    WavefrontTracer.Builder wfTracerBuilder = new WavefrontTracer.
+            Builder(wfSpanReporter, applicationTags);
+    return wfTracerBuilder.build();
+  }
+
+  public static Tracer init(String service, String proxyHost, String applicationName) throws IOException {
+    WavefrontProxyClient.Builder wfProxyClientBuilder = new WavefrontProxyClient.
+            Builder(proxyHost).metricsPort(2878).tracingPort(30000).distributionPort(40000);
+    WavefrontSender wavefrontSender = wfProxyClientBuilder.build();
+    /**
+     * TODO: You need to assign your microservices application a name.
+     * For this hackathon, please prepend your name (example: "john") to the beachshirts application,
+     * for example: applicationName = "john-beachshirts"
+     */
+    ApplicationTags applicationTags = new ApplicationTags.Builder(applicationName,
             service).build();
     Reporter wfSpanReporter = new WavefrontSpanReporter.Builder().
             withSource("wavefront-tracing-example").build(wavefrontSender);
