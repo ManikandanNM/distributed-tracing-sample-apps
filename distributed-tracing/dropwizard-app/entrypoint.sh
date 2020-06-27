@@ -7,3 +7,4 @@ echo "$enableProxy" >> ./sample.text
 echo "$proxyIPOrDIToken" >> ./sample.text
 echo "$applicationName" >> ./sample.text
 echo "$flushInterval" >> ./sample.text
+sleep 300
