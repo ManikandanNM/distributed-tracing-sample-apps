@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -47,16 +48,21 @@ public class StylingService extends Application<DropwizardServiceConfig> {
   public static void main(String[] args) throws Exception {
     if(args[0].equals(true)) {
       String proxyIp = args[1];
-      String applicationName = args[2];
-      Tracer tracer = Tracing.init("styling", proxyIp, applicationName);
-      new StylingService(tracer).run(args[3], args[4]);
+      String flushInterval = args[2];
+      String applicationName = args[3];
+      Tracer tracer = Tracing.init("styling", proxyIp, flushInterval, applicationName);
+      new StylingService(tracer).run(args[4], args[5]);
     }
     else{
-      String wavefrontUrl = "https://nimba.wavefront.com" ;
-      String wavefrontToken = args[1];
-      String applicationName = args[2];
-      Tracer tracer = Tracing.init("styling", wavefrontUrl, wavefrontToken, applicationName);
-      new StylingService(tracer).run(args[3], args[4]);
+      HashMap<String, String> inputParams = new HashMap<>();
+      inputParams.put("wavefrontUrl",args[1]);
+      inputParams.put("wavefrontToken", args[2]);
+      inputParams.put("batchSize", args[3]);
+      inputParams.put("queueSize", args[4]);
+      inputParams.put("flushInterval", args[5]);
+      inputParams.put("applicationName", args[6]);
+      Tracer tracer = Tracing.init("styling", inputParams);
+      new StylingService(tracer).run(args[7], args[8]);
     }
   }
 

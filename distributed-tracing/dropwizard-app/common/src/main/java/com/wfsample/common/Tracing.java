@@ -40,16 +40,20 @@ public final class Tracing {
   private Tracing() {
   }
 
-  public static Tracer init(String service, String wavefrontUrl, String wavefrontToken, String applicationName) throws IOException {
+  public static Tracer init(String service, HashMap<String, String> inputParams) throws IOException {
     WavefrontDirectIngestionClient.Builder wfDirectIngestionClient = new WavefrontDirectIngestionClient.
-            Builder(wavefrontUrl, wavefrontToken);
+            Builder(inputParams.get("wavefrontUrl"), inputParams.get("wavefrontToken"))
+            .batchSize(Integer.parseInt(inputParams.get("batchSize")))
+            .maxQueueSize(Integer.parseInt(inputParams.get("queueSize")))
+            .flushIntervalSeconds(Integer.parseInt(inputParams.get("flushInterval")));
+
     WavefrontSender wavefrontSender = wfDirectIngestionClient.build();
     /**
      * TODO: You need to assign your microservices application a name.
      * For this hackathon, please prepend your name (example: "john") to the beachshirts application,
      * for example: applicationName = "john-beachshirts"
      */
-    ApplicationTags applicationTags = new ApplicationTags.Builder(applicationName,
+    ApplicationTags applicationTags = new ApplicationTags.Builder(inputParams.get("applicationName"),
             service).build();
     Reporter wfSpanReporter = new WavefrontSpanReporter.Builder().
             withSource("wavefront-tracing-example").build(wavefrontSender);
@@ -58,9 +62,14 @@ public final class Tracing {
     return wfTracerBuilder.build();
   }
 
-  public static Tracer init(String service, String proxyHost, String applicationName) throws IOException {
-    WavefrontProxyClient.Builder wfProxyClientBuilder = new WavefrontProxyClient.
-            Builder(proxyHost).metricsPort(2878).tracingPort(30000).distributionPort(40000);
+  public static Tracer init(String service, String proxyHost, String flushInterval, String applicationName) throws IOException {
+    WavefrontProxyClient.Builder wfProxyClientBuilder = new WavefrontProxyClient
+            .Builder(proxyHost)
+            .metricsPort(2878)
+            .tracingPort(30000)
+            .distributionPort(40000)
+            .flushIntervalSeconds(Integer.parseInt(flushInterval));
+
     WavefrontSender wavefrontSender = wfProxyClientBuilder.build();
     /**
      * TODO: You need to assign your microservices application a name.
