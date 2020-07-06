@@ -1,12 +1,12 @@
 #!/bin/sh
 enableProxy=$1
-DICluster=
-DIToken=$2
-batchSize=$3
-queueSize=$4
-DIflushInteval=$5
-applicationName=$6
-loadgenFlushInterval=$7
+DICluster=$2
+DIToken=$3
+batchSize=$4
+queueSize=$5
+DIflushInteval=$6
+applicationName=$7
+loadgenFlushInterval=$8
 echo "$enableProxy" 
 echo "$DICluster"
 echo "$DIToken"
